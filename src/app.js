@@ -125,7 +125,7 @@ app.get('/locate', (req, res) => {
             })
 })
 
-app.get('/webhook', (req, res) => {
+app.post('/webhook', (req, res) => {
     console.log('receive post req');
     if(!req.body)
         return res.sendStatus(400)
