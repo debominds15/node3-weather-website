@@ -125,24 +125,57 @@ app.get('/locate', (req, res) => {
             })
 })
 
-app.post('/webhook', (req, res) => {
+app.post('/webhook', async (req, res) => {
     console.log('receive post req');
-    if(!req.body)
-        return res.sendStatus(400)
+    // if(!req.body)
+    //     return res.sendStatus(400)
     res.setHeader('ContentType', 'application/json')   
-    console.log('Got geo city parameter from DialogFlow', req
-    .body.queryResult.parameters['geo-city']);
+    
+    
+    //console.log('Got geo city parameter from DialogFlow', req.body.queryResult.parameters['geo-city']);
      
     var city = req.body.queryResult.parameters['geo-city']
-    var w = getWeather(city)
+    var result
+    //var city = req.query.address
+        geocode(city, (error, { latitude, longitude, location} = {}) => {
+            if(error){
+                return res.send({
+                    error: error
+                })
+            }
+            
+            //forecast(latitude, longitude, (error, { temperature,precipitationProbablity: precipProbability}) => {
+            
+            forecast(latitude, longitude, (error, forecastData) => {
+                if(error){
+                    return res.send({
+                        error: error
+                    })
+                }
+        
+                result = forecastData
+                
+                let responseObject = {
+                    "fulfillmentText": response,
+                    "fulfillmentMessages": [{"text": {"text": [result]}}]
+                }
+                res.json(responseObject)
+                // res.send({
+                //     forecast: forecastData,
+                //     location: location,
+                //     address: req.query.address
+                // })
+            })
+        })
 
+    console.log('result: ', result);
     let response = ""
-    let responseObject = {
-        "fulfillmentText": response,
-        "fulfillmentMessages": [{"text": {"text": [w]}}]
-    }
-    console.log(responseObject);
-    return res.json(responseObject)
+    // let responseObject = {
+    //     "fulfillmentText": response,
+    //     "fulfillmentMessages": [{"text": {"text": [result]}}]
+    // }
+    console.log('responseObject: ', responseObject);
+    //return res.json(responseObject)
 })
 
 function getWeather(address){
