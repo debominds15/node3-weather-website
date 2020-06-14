@@ -183,7 +183,7 @@ app.post('/webhook', (req, res) => {
                 result = forecastData
                 
                 let responseObject = {
-                    "fulfillmentText": response,
+                    "fulfillmentText": "",
                     "fulfillmentMessages": [{"text": {"text": [result]}}],
                     outputContexts
                 }
@@ -196,24 +196,8 @@ app.post('/webhook', (req, res) => {
                     displayText: result,
                     source: "webhook-echo-sample"
                   });
-
-
-                // res.send({
-                //     forecast: forecastData,
-                //     location: location,
-                //     address: req.query.address
-                // })
             })
         })
-
-    console.log('result: ', result);
-    let response = ""
-    // let responseObject = {
-    //     "fulfillmentText": response,
-    //     "fulfillmentMessages": [{"text": {"text": [result]}}]
-    // }
-    //console.log('responseObject: ', responseObject);
-    //return res.json(responseObject)
 })
 
 function getWeather(address){
@@ -245,31 +229,6 @@ function getWeather(address){
     
     return result
 }
-
-// app.post('/webhook', (req, res) => {
-//     console.log('receive post req ');
-//     if(!req.body)
-//         return res.sendStatus(400)
-//     res.setHeader('ContentType', 'application/json')   
-    
-    
-//     //console.log('Got geo city parameter from DialogFlow', req.body.queryResult.parameters['geo-city']);
-     
-//     var city = req.body.queryResult.parameters['geo-city']
-//     console.log('city: ', city);
-    
-//     var outputContexts = req.body.queryResult.outputContexts
-//     console.log('outputContexts: -->', outputContexts);
-
-//        let responseObject = {
-//                     "fulfillmentText": response,
-//                     "fulfillmentMessages": [{"text": {"text": [result]}}],
-//                     outputContexts
-//                 }
-//                 res.json(responseObject)
-
-
-// })
 
 app.get('/products', (req, res) => {
     if(!req.query.search){
