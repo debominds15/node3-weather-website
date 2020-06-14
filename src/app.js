@@ -6,6 +6,8 @@ const forecast = require('./utils/forecast')
 
 const app = express()
 
+
+
 const port = process.env.PORT || 3000
 
 console.log(__dirname);
@@ -25,6 +27,7 @@ app.set('views',viewsPath)
 //Set up handlebars engine
 app.set('view engine', 'hbs')
 app.use(express.static(publicDirectory))
+app.use(express.json())
 
 app.get('',(req, res) => {
     res.render('index',{
@@ -125,16 +128,18 @@ app.get('/locate', (req, res) => {
             })
 })
 
-app.post('/webhook', async (req, res) => {
-    console.log('receive post req');
-    // if(!req.body)
-    //     return res.sendStatus(400)
+app.post('/webhook', (req, res) => {
+    console.log('receive post req ');
+    if(!req.body)
+        return res.sendStatus(400)
     res.setHeader('ContentType', 'application/json')   
     
     
     //console.log('Got geo city parameter from DialogFlow', req.body.queryResult.parameters['geo-city']);
      
     var city = req.body.queryResult.parameters['geo-city']
+    //var city = req.body.location
+
     var result
     //var city = req.query.address
         geocode(city, (error, { latitude, longitude, location} = {}) => {
@@ -174,7 +179,7 @@ app.post('/webhook', async (req, res) => {
     //     "fulfillmentText": response,
     //     "fulfillmentMessages": [{"text": {"text": [result]}}]
     // }
-    console.log('responseObject: ', responseObject);
+    //console.log('responseObject: ', responseObject);
     //return res.json(responseObject)
 })
 
