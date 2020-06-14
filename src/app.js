@@ -138,6 +138,12 @@ app.post('/webhook', (req, res) => {
     //console.log('Got geo city parameter from DialogFlow', req.body.queryResult.parameters['geo-city']);
      
     var city = req.body.queryResult.parameters['geo-city']
+    console.log('city: ', city);
+    
+    var outputContexts = req.body.queryResult.outputContexts
+    console.log('outputContexts: -->', outputContexts);
+    
+
     //var city = req.body.location
 
     var result
@@ -162,7 +168,8 @@ app.post('/webhook', (req, res) => {
                 
                 let responseObject = {
                     "fulfillmentText": response,
-                    "fulfillmentMessages": [{"text": {"text": [result]}}]
+                    "fulfillmentMessages": [{"text": {"text": [result]}}],
+                    outputContexts
                 }
                 res.json(responseObject)
                 // res.send({
