@@ -128,67 +128,93 @@ app.get('/locate', (req, res) => {
             })
 })
 
-// app.post('/webhook', (req, res) => {
-//     console.log('receive post req ');
-//     if(!req.body)
-//         return res.sendStatus(400)
-//     res.setHeader('ContentType', 'application/json')   
+app.post('/webhook', (req, res) => {
+    console.log('receive post req ');
+    if(!req.body)
+        return res.sendStatus(400)
+    res.setHeader('ContentType', 'application/json')   
     
+    var speechResponse = {
+        "payload": {
+          "google": {
+            "expectUserResponse": true,
+            "richResponse": {
+              "items": [
+                {
+                  "simpleResponse": {
+                    "textToSpeech": "this is a Google Assistant response"
+                  }
+                }
+              ]
+            }
+          }
+        }
+      }
     
-//     //console.log('Got geo city parameter from DialogFlow', req.body.queryResult.parameters['geo-city']);
+    //console.log('Got geo city parameter from DialogFlow', req.body.queryResult.parameters['geo-city']);
      
-//     var city = req.body.queryResult.parameters['geo-city']
-//     console.log('city: ', city);
+    var city = req.body.queryResult.parameters['geo-city']
+    console.log('city: ', city);
     
-//     var outputContexts = req.body.queryResult.outputContexts
-//     console.log('outputContexts: -->', outputContexts);
+    var outputContexts = req.body.queryResult.outputContexts
+    console.log('outputContexts: -->', outputContexts);
     
 
-//     //var city = req.body.location
+    //var city = req.body.location
 
-//     var result
-//     //var city = req.query.address
-//         geocode(city, (error, { latitude, longitude, location} = {}) => {
-//             if(error){
-//                 return res.send({
-//                     error: error
-//                 })
-//             }
+    var result
+    //var city = req.query.address
+        geocode(city, (error, { latitude, longitude, location} = {}) => {
+            if(error){
+                return res.send({
+                    error: error
+                })
+            }
             
-//             //forecast(latitude, longitude, (error, { temperature,precipitationProbablity: precipProbability}) => {
+            //forecast(latitude, longitude, (error, { temperature,precipitationProbablity: precipProbability}) => {
             
-//             forecast(latitude, longitude, (error, forecastData) => {
-//                 if(error){
-//                     return res.send({
-//                         error: error
-//                     })
-//                 }
+            forecast(latitude, longitude, (error, forecastData) => {
+                if(error){
+                    return res.send({
+                        error: error
+                    })
+                }
         
-//                 result = forecastData
+                result = forecastData
                 
-//                 let responseObject = {
-//                     "fulfillmentText": response,
-//                     "fulfillmentMessages": [{"text": {"text": [result]}}],
-//                     outputContexts
-//                 }
-//                 res.json(responseObject)
-//                 // res.send({
-//                 //     forecast: forecastData,
-//                 //     location: location,
-//                 //     address: req.query.address
-//                 // })
-//             })
-//         })
+                let responseObject = {
+                    "fulfillmentText": response,
+                    "fulfillmentMessages": [{"text": {"text": [result]}}],
+                    outputContexts
+                }
+                //res.json(responseObject)
+                return res.json({
+                    payload: speechResponse,
+                    //data: speechResponse,
+                    fulfillmentText: result,
+                    speech: result,
+                    displayText: result,
+                    source: "webhook-echo-sample"
+                  });
 
-//     console.log('result: ', result);
-//     let response = ""
-//     // let responseObject = {
-//     //     "fulfillmentText": response,
-//     //     "fulfillmentMessages": [{"text": {"text": [result]}}]
-//     // }
-//     //console.log('responseObject: ', responseObject);
-//     //return res.json(responseObject)
-// })
+
+                // res.send({
+                //     forecast: forecastData,
+                //     location: location,
+                //     address: req.query.address
+                // })
+            })
+        })
+
+    console.log('result: ', result);
+    let response = ""
+    // let responseObject = {
+    //     "fulfillmentText": response,
+    //     "fulfillmentMessages": [{"text": {"text": [result]}}]
+    // }
+    //console.log('responseObject: ', responseObject);
+    //return res.json(responseObject)
+})
 
 function getWeather(address){
     var result 
@@ -220,31 +246,30 @@ function getWeather(address){
     return result
 }
 
-app.post('/webhook', (req, res) => {
-    console.log('receive post req ');
-    if(!req.body)
-        return res.sendStatus(400)
-    res.setHeader('ContentType', 'application/json')   
+// app.post('/webhook', (req, res) => {
+//     console.log('receive post req ');
+//     if(!req.body)
+//         return res.sendStatus(400)
+//     res.setHeader('ContentType', 'application/json')   
     
     
-    //console.log('Got geo city parameter from DialogFlow', req.body.queryResult.parameters['geo-city']);
+//     //console.log('Got geo city parameter from DialogFlow', req.body.queryResult.parameters['geo-city']);
      
-    var city = req.body.queryResult.parameters['geo-city']
-    console.log('city: ', city);
+//     var city = req.body.queryResult.parameters['geo-city']
+//     console.log('city: ', city);
     
-    var outputContexts = req.body.queryResult.outputContexts
-    console.log('outputContexts: -->', outputContexts);
-    let response = ""
-    
-    let responseObject = {
-        "fulfillmentText": response,
-        "fulfillmentMessages": [{"text": {"text": ["Hey debo this sample weather info!"]}}],
-        outputContexts
-    }
-    res.json(responseObject)
+//     var outputContexts = req.body.queryResult.outputContexts
+//     console.log('outputContexts: -->', outputContexts);
+
+//        let responseObject = {
+//                     "fulfillmentText": response,
+//                     "fulfillmentMessages": [{"text": {"text": [result]}}],
+//                     outputContexts
+//                 }
+//                 res.json(responseObject)
 
 
-})
+// })
 
 app.get('/products', (req, res) => {
     if(!req.query.search){
